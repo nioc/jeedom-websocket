@@ -29,26 +29,29 @@ if (!isConnect()) {
 <form class="form-horizontal">
     <fieldset>
         <div class="form-group">
-            <label class="col-lg-4 control-label">{{Global param 1}}</label>
-            <div class="col-lg-2">
-                <input type="text" class="configKey form-control" data-l1key="param1" value="{{Default value}}"/>
+            <label class="col-lg-6 control-label">{{Port d'écoute du websocket}}</label>
+            <div class="col-lg-1">
+                <input class="configKey form-control" type="number" data-l1key="port" placeholder="8090" />
             </div>
         </div>
         <div class="form-group">
-            <label class="col-lg-4 control-label">{{Global param 2}}</label>
-            <div class="col-lg-2">
-                <input type="checkbox" class="configKey form-control" data-l1key="param2" checked="checked" />
+            <label class="col-lg-6 control-label">{{Délai d'attente en secondes entre deux lectures des évenements}}</label>
+            <div class="col-lg-1">
+                <input class="configKey form-control" type="number" data-l1key="readDelay" placeholder="3" />
             </div>
         </div>
         <div class="form-group">
-            <label class="col-lg-4 control-label">{{Global param 3}}</label>
-            <div class="col-lg-2">
-                <select class="configKey form-control" data-l1key="param3">
-                    <option value="value1">{{First value}}</option>
-                    <option value="value2">{{Second value}}</option>
-                </select>
+            <label class="col-lg-6 control-label">{{Délai en secondes avant fermeture d'une connection non authentifiée}}</label>
+            <div class="col-lg-1">
+                <input class="configKey form-control" type="number" data-l1key="authDelay" placeholder="1" />
             </div>
         </div>
-  </fieldset>
+        <div class="form-group">
+            <label class="col-lg-6 control-label">{{Hosts autorisés à se connecter au socket}}</label>
+            <div class="col-lg-4">
+                <input class="configKey form-control" data-l1key="allowedHosts" placeholder="10.0.0.42,localhost,domain.ltd" />
+            </div>
+        </div>
+    </fieldset>
 </form>
 

@@ -1,0 +1,15 @@
+[Unit]
+Description=Jeedom websocket
+Documentation=https://github.com/nioc/jeedom-websocket
+After=network.target
+
+[Service]
+User=www-data
+WorkingDirectory=/var/www/html/plugins/Websocket/core/php
+ExecStart=/usr/bin/php bin/server.php
+Restart=on-failure
+RestartSec=1000ms
+SyslogIdentifier=jeedom-websocket
+
+[Install]
+WantedBy=multi-user.target

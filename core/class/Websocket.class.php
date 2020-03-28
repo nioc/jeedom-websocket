@@ -18,9 +18,8 @@
 
 /* * ***************************Includes********************************* */
 require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
-require_once 'TemplateCmd.class.php';
 
-class Template extends eqLogic
+class Websocket extends eqLogic
 {
     /*     * *************************Attributs****************************** */
 
@@ -50,48 +49,78 @@ class Template extends eqLogic
       }
      */
 
+    public static function deamon_info()
+    {
+        $return = array();
 
+        $status = trim(shell_exec('systemctl is-active jeedom-websocket'));
+        $return['state'] = ($status === 'active') ? 'ok' : 'nok';
+
+        $return['launchable'] = 'ok';
+        if (!file_exists('/etc/systemd/system/jeedom-websocket.service')) {
+            $return['launchable'] = 'nok';
+            $return['launchable_message'] = __('Le démon n\'est pas installé ', __FILE__);
+        }
+        return $return;
+    }
+    
+    public static function deamon_start($_debug = false)
+    {
+        log::add('Websocket', 'info', 'Starting daemon');
+        exec(system::getCmdSudo() . 'systemctl restart jeedom-websocket');
+        $i = 0;
+        while ($i < 30) {
+            $deamon_info = self::deamon_info();
+            if ($deamon_info['state'] == 'ok') {
+                break;
+            }
+            sleep(1);
+            $i++;
+        }
+        if ($i >= 30) {
+            log::add('Websocket', 'error', 'Unable to start daemon');
+            return false;
+        }
+    }
+
+    public static function deamon_stop()
+    {
+        log::add('Websocket', 'info', 'Stopping daemon');
+        exec(system::getCmdSudo() . 'systemctl stop jeedom-websocket');
+    }
 
     /*     * *********************Méthodes d'instance************************* */
 
     public function preInsert()
     {
-        
     }
 
     public function postInsert()
     {
-        
     }
 
     public function preSave()
     {
-        
     }
 
     public function postSave()
     {
-        
     }
 
     public function preUpdate()
     {
-        
     }
 
     public function postUpdate()
     {
-        
     }
 
     public function preRemove()
     {
-        
     }
 
     public function postRemove()
     {
-        
     }
 
     /*

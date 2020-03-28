@@ -1,14 +1,14 @@
 {
-	"id" : "template",
-	"name" : "Template",
-	"description" : "Plugin template pour la création de plugin",
+	"id" : "Websocket",
+	"name" : "Websocket",
+	"description" : "Plugin d'échanges client-server via Websocket",
 	"licence" : "AGPL",
-	"author" : "Loïc",
+	"author" : "Nioc",
 	"require" : "3.0",
-	"category" : "programming",
+	"category" : "communication",
 	"hasDependency" : false,
-	"hasOwnDeamon" : false,
+	"hasOwnDeamon" : true,
 	"maxDependancyInstallTime" : 0,
-	"changelog" : "https://jeedom.github.io/plugin-template/#language#/changelog",
-	"documentation" : "https://jeedom.github.io/plugin-template/#language#/"
+	"changelog" : "https://github.com/nioc/jeedom-websocket/releases",
+	"documentation" : "https://github.com/nioc/jeedom-websocket/README.md"
 }

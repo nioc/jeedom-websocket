@@ -1,37 +1,82 @@
+# ![Screenshot desktop](/logo.png) Jeedom Websocket
 
-[![license](https://img.shields.io/github/license/Jeedom-Plugins-Extra/plugin-template.svg)](./LICENSE) [![GitHub contributors](https://img.shields.io/github/contributors/Jeedom-Plugins-Extra/plugin-template.svg)](../../graphs/contributors) [![GitHub release](https://img.shields.io/github/release/Jeedom-Plugins-Extra/plugin-template.svg)](../../releases) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/_USERNAME) [![Waffle.io - Columns and their card count](https://badge.waffle.io/Jeedom-Plugins-Extra/plugin-template.svg?columns=all)](https://waffle.io/Jeedom-Plugins-Extra/plugin-template)
+[![license: GPLv2](https://img.shields.io/badge/license-GPLv2-blue.svg)](https://www.gnu.org/licenses/gpl-2.0) [![GitHub release](https://img.shields.io/github/release/nioc/jeedom-websocket.svg)](https://github.com/nioc/jeedom-websocket/releases/latest)
 
-### Master: [![Build Status](https://travis-ci.org/Jeedom-Plugins-Extra/plugin-template.svg?branch=master)](https://travis-ci.org/Jeedom-Plugins-Extra/plugin-template)  [![Coverage Status](https://coveralls.io/repos/github/Jeedom-Plugins-Extra/plugin-template/badge.svg?branch=master)](https://coveralls.io/github/Jeedom-Plugins-Extra/plugin-template?branch=master)
+[Jeedom](https://www.jeedom.com) plugin to provide a reliable low latency bidirectional client-server communication over [websocket](https://wikipedia.org/wiki/WebSocket) protocol.
 
-### Develop: [![Build Status](https://travis-ci.org/Jeedom-Plugins-Extra/plugin-template.svg?branch=develop)](https://travis-ci.org/Jeedom-Plugins-Extra/plugin-template)  [![Coverage Status](https://coveralls.io/repos/github/Jeedom-Plugins-Extra/plugin-template/badge.svg?branch=develop)](https://coveralls.io/github/Jeedom-Plugins-Extra/plugin-template?branch=develop)
+Events are pushed to clients avoiding long polling (Ajax request) overhead.
 
-# Présentation:
+Reduce server load by sharing the Jeedom query and broadcast result to multiples clients.
 
-Template de permettant de céér des plugins pour Jeedom
+## Installation & configuration
 
-# Documentation du plugin, comment créér un plugin:
+-   Install plugin:
+    -   Upload `Websocket.zip` file in the Jeedom plugin admin GUI,
+    -   Set plugin logical id: `Websocket`,
+    -   Save and refresh (F5).
 
-*Effacer cette section dans votre plugin*
+-   Tune plugin configuration (from plugin configuration GUI):
+    -   Websocket internal port: any available port (default `8090`),
+    -   Period in seconds between events readings,
+    -   Period in seconds before closing an unauthenticated connection,
+    -   Allowed hosts (**most important**): comma-separated list of hosts which are allowed to connect to websocket, example: `myjeedom.ltd,10.0.0.42` (default set to your internal and external Jeedom instance hosts).
 
-[Documentation principale](https://github.com/rjullien/plugin-template/blob/develop/docs/fr_FR/index-template.md)
+-   (Optional) proxying websocket port (`8090`) to regular http (`80`) / https (`443`) with Apache (require `proxy_wstunnel` module) by adding the following lines in `/etc/apache2/sites-enabled/000-default.conf`:
+    ```configuration
+      <Location "/myawesomesocket">
+              ProxyPass ws://localhost:8090
+              ProxyPassReverse ws://localhost:8090
+      </Location>
+    ```
 
-[Comment documenter un plug-in](https://github.com/Jeedom-Plugins-Extra/Jeedom-Plugins-Extra/wiki/Documentation-d'un-Plugin)
+-   Check [daemon configuration](/resources/jeedom-websocket.service):
+    -   Does webserver user is not `www-data`?
+        -   Change line `User=www-data`
+    -   Does jeedom path is not `/var/www/html/`?
+        -   Change line `WorkingDirectory=/var/www/html/plugins/Websocket/core/php`
+    -   Does PHP path is not `/usr/bin/php`?
+        -   Change line `ExecStart=/usr/bin/php bin/server.php`
 
-[Comment tester un plugin](https://github.com/Jeedom-Plugins-Extra/Jeedom-Plugins-Extra/wiki/Tester-un-plugin-avec-travis-ci)
+## Use
 
-[Comment creer l'icône](https://github.com/Jeedom-Plugins-Extra/Jeedom-Plugins-Extra/wiki/07-Cr%C3%A9ation-d'une-icone-plugin)
+To get Jeedom events, client:
 
-[Les bonnes pratiques](https://github.com/Jeedom-Plugins-Extra/Jeedom-Plugins-Extra/wiki/Bonnes-pratiques-pour-les-plugins)
+1.  connect to websocket endpoint,
+2.  send user API key as soon as `onopen` event occurs,
+3.  do your useful stuffs with Jeedom events.
 
-[Créér un plugun au standard Jeedom-Plugins-Extra](https://github.com/Jeedom-Plugins-Extra/Jeedom-Plugins-Extra/wiki/PROJET-:-Crit%C3%A8re-de-validation-d'un-plugin)
+JavaScript example:
 
-# Documentation du plugin:
-[![Read the Docs](https://img.shields.io/readthedocs/pip.svg)](docs/fr_FR/presentation.md) 
-[présentation](docs/fr_FR/presentation.md) [configuration](docs/fr_FR/configuration.md) [faq](docs/fr_FR/faq.md) [changelog](docs/fr_FR/changelog.md)
+```javascript
+//1. connect
+const websocket = new WebSocket('ws://10.0.0.42/myawesomesocket')
 
-# Documentation complète:
+//2. send user credentials
+websocket.onopen = (e) => {
+  const authMsg = JSON.stringify({ apiKey: 'userApiKey' })
+  websocket.send(authMsg)
+}
 
-[![Read the Docs](plugin_info/template_icon.png)](https://jeedom-plugins-extra.github.io/plugin-template)
+//3. Handle events
+websocket.onmessage = (e) => {
+  //do stuff with Jeedom events (e.data.result)
+}
+websocket.onerror = (e) => {
+  //handle error
+}
+websocket.onclose = (e) => {
+  //handle connection closed
+}
+```
 
+## Credits
 
-[![Support via PayPal](https://cdn.rawgit.com/twolfson/paypal-github-button/1.0.0/dist/button.svg)](https://www.paypal.me/_USERNAME/)
+-   **[Nioc](https://github.com/nioc/)** - _Initial work_
+
+See also the list of [contributors](https://github.com/nioc/jeedom-websocket/contributors) to this project.
+
+This project is powered by the following components:
+
+-   [Ratchet](https://github.com/ratchetphp/Ratchet) (MIT)
+-   [NextDom plugin-template](https://github.com/NextDom/plugin-template) (GPLv2)
+-   [Jeedom](https://github.com/jeedom) (GPL)
