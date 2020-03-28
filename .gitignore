@@ -7,3 +7,5 @@ sftp-config.json
 .DS_Store
 Thumbs.db
 *.php~
+3rparty/vendor/
+.php_cs.cache
